@@ -16,7 +16,7 @@ def clear():
 
 # Holds some ASCII art and other formatting
 StringFormatting = {
-    "RisingSun": """
+"RisingSun": """
                    \       /            _\/_
                      .-'-.              //o\  _\/_
   _  ___  __  _ --_ /     \ _--_ __  __ _ | __/o\\ _
@@ -24,7 +24,8 @@ StringFormatting = {
  =- _=-=-_=- _=-= _--=====- _=-=_-_,-"          |
    =- =- =-= =- = -  -===- -= - ."
 """,
-    "RoundStats": """Round {round} has started.
+"RoundStats": """
+Round {round} has started.
 {characters} will be joining you...
 
 Statistics:
@@ -80,8 +81,11 @@ class Game:
         logFormatted = StringFormatting["RoundStats"].format(round=self.round, characters=charactersJoining, dogs=self.dogs, ammo=self.ammo, survivors=self.persons)
         print(logFormatted.center(terminalSize.columns))
 
+        # Seperator
+        print(">---<\n")
+
     #
-    def StartRound(self):
+    def StartRound(self, d1=None, d2=None):
         # Check the rounds
         if (self.round > 100):
             print("You have survived. Congrats!")
@@ -98,8 +102,8 @@ class Game:
 
         # Rolling dice
         sidedDice = len(self.diceLookup) - 1
-        d1 = randint(1, sidedDice)
-        d2 = randint(1, sidedDice)
+        d1 = d1 or randint(1, sidedDice)
+        d2 = d2 or randint(1, sidedDice)
 
         # Announce roll
         print(f"A {d1} ({self.diceLookup[d1]}) and a {d2} ({self.diceLookup[d2]}) has been rolled...")
@@ -107,7 +111,7 @@ class Game:
         # Possible reroll
         while (self.dogs >= 1):
             # Creating the re roll menu
-            menu = Menu(f"Do you wish to reroll, you have {self.dogs} dogs?", None, [
+            menu = Menu(f"Do you wish to reroll, you have {self.dogs} dog(s)?", None, [
                 "No"
             ])
             Menu("Yes", menu, [

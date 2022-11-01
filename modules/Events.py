@@ -18,11 +18,47 @@ def event(func: Callable):
     # Return
     return func
 
+# Nothing events.
+@event
+def Zombie_Nothing(game: Game):
+    print("You spot a zombie in the far distance... You continue on.")
+@event
+def Ammo_Nothing(game: Game):
+    print("While exploring you found some ammo, shame that they are just casings. I wonder what happened here...")
+@event
+def Food_Nothing(game: Game):
+    print("There was a slice of cheese on the floor. It smelt... fresh?")
+@event
+def Survivor_Nothing(game: Game):
+    print("You're getting lonely... You waved to your imaginary friend.")
+
 # Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43)
 @event
 def Zombie_Zombie(game: Game):
     # Intro - calculate the number of zombies
-    print("Zombie Apocalypse!")
+    print("""
+    ZzZZzzzZOMBIE APOCALYPSE!!                       
+                           \                     
+                                .....            
+                               C C  /            
+                              /<   /             
+               ___ __________/_#__=o             
+              /(- /(\_\________   \              
+              \ ) \ )_      \o     \             
+              /|\ /|\       |'     |             
+                            |     _|             
+                            /o   __\             
+                           / '     |             
+                          / /      |             
+                         /_/\______|             
+                        (   _(    <              
+                         \    \    \             
+                          \    \    |            
+                           \____\____\           
+                           ____\_\__\_\          
+                         /`   /`     o\          
+                         |___ |_______|.. .
+    """)
     zombies = randint(1, 4)
     usedAmmo = zombies if (game.ammo >= zombies) else game.ammo
     print(f"{zombies} zombies have spawned...")
@@ -50,6 +86,8 @@ def Zombie_Zombie(game: Game):
     if (response == "Sacrifice Fred"):
         game.fred = None
         zombies = 0
+        print("No, Fred. Don't do it! NOOOOOOOOOOOOOOOOOO.")
+        print("All zombies are dead.")
         return True
 
     # Shooting the zombies
@@ -58,6 +96,7 @@ def Zombie_Zombie(game: Game):
         ammoUse = [int(s) for s in response.split() if s.isdigit()][0]
         zombies -= ammoUse
         game.ammo -= ammoUse
+        print("Ammo casings litter the floor...")
 
     # There are no zombies left
     if (zombies <= 0):

@@ -1,6 +1,11 @@
 # Zombie Apoc
 This is a text-based game that is similar to Dungeons and Dragons.
 
+## To do
+- Add more events
+- Add items?
+- Add HP system, etc
+- 
 ## Plan
 My plan on making this game:
 
