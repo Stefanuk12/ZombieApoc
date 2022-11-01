@@ -10,14 +10,13 @@ Events = []
 def clear():
     # Windows
     if (os.name == "nt"):
-        os.execute("cls")
-    # others
-    else:
-        os.execute("clear")
+        os.system("cls")
+    else: # others
+        os.system("clear")
 
 # Holds some ASCII art and other formatting
 StringFormatting = {
-    RisingSun: """
+    "RisingSun": """
                    \       /            _\/_
                      .-'-.              //o\  _\/_
   _  ___  __  _ --_ /     \ _--_ __  __ _ | __/o\\ _
@@ -25,7 +24,7 @@ StringFormatting = {
  =- _=-=-_=- _=-= _--=====- _=-=_-_,-"          |
    =- =- =-= =- = -  -===- -= - ."
 """,
-    RoundStats: """Round {round} has started.
+    "RoundStats": """Round {round} has started.
 {characters} will be joining you...
 
 Statistics:
@@ -35,6 +34,7 @@ Ammo: {ammo}
 Survivors: {survivors}
 """
 }
+
 #
 class Game:
     # Vars
@@ -65,7 +65,7 @@ class Game:
 
         # ASCII art
         terminalSize = os.get_terminal_size()
-        risingSun = StringFormatting.RisingSun.center(terminalSize.columns)
+        risingSun = StringFormatting["RisingSun"].center(terminalSize.columns)
         print(risingSun)
         
         # Work out which characters will be joining
@@ -74,10 +74,10 @@ class Game:
             characters.append("Fred")
         if (self.velma):
             characters.append("Velma")
-        charactersJoining = characters.join(", ") if len(characters) != 0 else "No"        
+        charactersJoining = ", ".join(characters) if len(characters) != 0 else "No"        
 
         # Print stats
-        logFormatted = StringFormatting.RoundStats.format(round=self.round, characters=charactersJoining, dogs=self.dogs, ammo=self.ammo, survivors=self.persons)
+        logFormatted = StringFormatting["RoundStats"].format(round=self.round, characters=charactersJoining, dogs=self.dogs, ammo=self.ammo, survivors=self.persons)
         print(logFormatted.center(terminalSize.columns))
 
     #
@@ -150,15 +150,15 @@ class Game:
             event = next(filtered)
         except:
             print("Nothing happened...")
+            input("Press enter to continue...")
             return False
 
         # Run the event
         event.result(self)
+        input("Press enter to continue...")
         return False
 
     # Actually starts the entire game
     def Start(self):
         while (self.StartRound() == False):
             pass
-
-
