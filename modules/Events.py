@@ -108,18 +108,24 @@ def Zombie_Zombie(game: Game):
         print("Velma, go!")
 
         lastRoll = 0
-        while True:
+        while (game.hp > 0):
             # For each zombie
             for i in range(zombies):
-                roll = randint(1, 5)
+                # Check if died
+                if (game.hp <= 0):
+                    break
+
+                # Roll
+                roll = randint(1, 10)
                 lastRoll = roll
 
-                # odd (successful)
-                if (roll % 2 != 0):
+                # Successful hit
+                if (roll <= 8):
                     zombies -= 1
                     print("Take the bat zombie!")
                 else:
-                    print("Ah! I missed!")
+                    print("Ah! I missed! OWWW")
+                    game.hp -= 1
 
                 # double
                 if (lastRoll == 1 and roll == 1):
@@ -135,4 +141,4 @@ def Zombie_Zombie(game: Game):
         print("Phew. They're all dead.")
         return True
     else:
-        return False # should not happen
+        return False # should not happen unless died

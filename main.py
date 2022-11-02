@@ -1,5 +1,6 @@
 # Dependencies
 from modules.Game import Game
+from modules.Survivor import Survivor, Medic
 import modules.Events # Force the events to run
 import os
 
@@ -13,6 +14,9 @@ if (not testing):
     os._exit(0)
 
 # TESTS
+game.survivors.append(Survivor())
+game.survivors.append(Medic())
+game.survivors.append(Survivor())
 game.StartRound(1, 1)
 
 # TESTS - nothing events
