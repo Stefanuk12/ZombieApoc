@@ -147,9 +147,10 @@ class Game:
 
         # Figure out the event
         conditions = [self.diceLookup[d1], self.diceLookup[d2]]
+        reverseConditions = conditions.reverse()
         event = None
         try:
-            filtered = filter(lambda x: x.conditions == conditions, Events)
+            filtered = filter(lambda x: x.conditions == conditions or x.conditions == reverseConditions, Events)
             event = next(filtered)
         except:
             s_print("Nothing happened...")
