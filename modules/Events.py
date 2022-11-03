@@ -4,6 +4,8 @@ from modules.Event import Event
 from random import randint
 from modules.Game import Events, Game
 from modules.Menu import Menu
+from modules.Survivor import Survivor, Medic
+from modules.Utils import s_print, colours
 
 # Decorator for creating events
 def event(func: Callable):
@@ -21,23 +23,23 @@ def event(func: Callable):
 # Nothing events.
 @event
 def Zombie_Nothing(game: Game):
-    print("You spot a zombie in the far distance... You continue on.")
+    s_print("You spot a zombie in the far distance... You continue on.")
 @event
 def Ammo_Nothing(game: Game):
-    print("While exploring you found some ammo, shame that they are just casings. I wonder what happened here...")
+    s_print("While exploring you found some ammo, shame that they are just casings. I wonder what happened here...")
 @event
 def Food_Nothing(game: Game):
-    print("There was a slice of cheese on the floor. It smelt... fresh?")
+    s_print(f"{colours.fg.lightblue}There was a slice of cheese on the floor. It smelt... fresh?", 0.5)
 @event
 def Survivor_Nothing(game: Game):
-    print("You're getting lonely... You waved to your imaginary friend.")
+    s_print(f"{colours.fg.blue}You're getting lonely... You waved to your imaginary friend.", 1.5)
 
 # Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43). To do: Check if Velma is alive, if not sacrifice a survivor or take damage 
 @event
 def Zombie_Zombie(game: Game):
     # Intro - calculate the number of zombies
-    print("""
-    ZzZZzzzZOMBIE APOCALYPSE!!                       
+    print(f"""
+    {colours.fg.green}ZzZZzzzZOMBIE APOCALYPSE!!{colours.reset}               
                            \                     
                                 .....            
                                C C  /            
@@ -86,7 +88,7 @@ def Zombie_Zombie(game: Game):
     if (response == "Sacrifice Fred"):
         game.fred = None
         zombies = 0
-        print("No, Fred. Don't do it! NOOOOOOOOOOOOOOOOOO.")
+        s_print(f"{colours.fg.blue}No, Fred. Don't do it! NOOOOOOOOOOOOOOOOOO.")
         print("All zombies are dead.")
         return True
 
@@ -100,7 +102,7 @@ def Zombie_Zombie(game: Game):
 
     # There are no zombies left
     if (zombies <= 0):
-        print("Phew. They're all dead.")
+        s_print(f"{colours.fg.blue}Phew. They're all dead.")
         return True
 
     # Velma
@@ -122,15 +124,18 @@ def Zombie_Zombie(game: Game):
                 # Successful hit
                 if (roll <= 8):
                     zombies -= 1
-                    print("Take the bat zombie!")
+                    s_print(f"{colours.fg.blue}Take the bat, zombie!")
+                    print(f"{colours.fg.lightgreen}-1 Zombie{colours.reset}")
                 else:
-                    print("Ah! I missed! OWWW")
+                    s_print(f"{colours.fg.blue}Ah! I missed! OWWW")
+                    print(f"{colours.fg.red}-1 Health{colours.reset}")
                     game.hp -= 1
 
                 # double
                 if (lastRoll == 1 and roll == 1):
                     zombies += 2
-                    print("Two more zombies!?")
+                    s_print(f"{colours.fg.blue}Two more zombies!?")
+                    print(f"{colours.fg.red}+2 Zombies{colours.reset}")
 
             # Check if there are no more zombies left
             if (zombies <= 0):
@@ -138,7 +143,7 @@ def Zombie_Zombie(game: Game):
 
     # There are no zombies left
     if (zombies <= 0):
-        print("Phew. They're all dead.")
+        print(f"{colours.fg.blue}Phew. They're all dead.{colours.reset}")
         return True
     else:
         return False # should not happen unless died
@@ -163,7 +168,7 @@ def Zombie_Ammo(game: Game):
 ||         ||
 ''         ''  
 """)
-    print("You come across a zombie... It seems to be unconcious on some ammo...")
+    s_print("You come across a zombie... It seems to be unconcious on some ammo...")
 
     # Ask the user on what to do
     menu = Menu("What will you do?", None, [
@@ -180,16 +185,114 @@ def Zombie_Ammo(game: Game):
         if (response == "Attempt to steal the ammo"):
             # Add the ammo
             stolenAmmo = d10 // 3
+            stolenAmmo = 1 if stolenAmmo <= 0 else stolenAmmo
             game.ammo += d10 // 3
-            print("Come on, come on, come on... Just, move, this... yes!")
-            print(f"You have successfully stolen {stolenAmmo} from the zombie.")
-
+            s_print(f"{colours.fg.blue}Come on, come on, come on... Just, move, this... yes!")
+            print(f"You have successfully stolen {stolenAmmo} ammo from the zombie.")
+            print(f"{colours.fg.green}+ {stolenAmmo} Ammo{colours.reset}")
         #
-        print("You walk quietly past the zombie")
+        print("You walk quietly past the zombie.")
         return False
 
     # Zombie woke up, uh oh
-    print("You walk past, but trip over a wire on the floor. The zombie wakes and sees you...")
-    zombieMenu = Menu("What will you do?", None, [
-        "" # implement zombie apoc logic here
+    s_print("You walk past, but trip over a wire on the floor. The zombie wakes and sees you...")
+    s_print("You didn't notice...")
+    s_print("It starts to sneak upon you while you remain oblivious...")
+    s_print(f"{colours.fg.blue}AHHH, OW!", 0.5)
+    print("-1 Health")
+    game.hp -= 1
+
+#
+@event
+def Zombie_Food(game: Game):
+    print("""
+[_______________________________]
+|===============================|
+|   __                          |
+|._/_.' _, ,__  ,_ /_ _  / /'   |
+| / _  / / /// / // /(-'/ / /|  |
+| \__)(_(_//(_/_/(_/(__(_(_/_/_ |
+|            /                  |
+|       C O N D E N S E D       |
+|                               |
+|            .-" "-.            |
+|           /:`:..':\           |
+|==========|.:::::..:|==========|
+|           \::::::./           |
+|            `-:::-'            |
+|     ___                       |
+|      |  _ ,_ _  _ -|- _       |
+|      | (_)| | |(_| |_(_)      |
+|                               |
+|V( )V( )V(  S O U P  )V( )V( )V|
+|----------           ----------|
+'==============================='   
+""")
+    s_print(f"{colours.fg.green}Mmmm... Delicus fud...")
+    s_print("You see a survivor? eating food, you approach to say hello...")
+    s_print(f"{colours.fg.green}Hm? ARGGG, BRAINSSSS!")
+    s_print(f"{colours.fg.blue}Uh oh. That's no survivor! RUN!!!")
+    print("You barely escape, and managed to steal some food on the run.")
+    s_print(f"{colours.fg.lightgreen}+1 Food")
+    game.food += 1
+
+#
+@event
+def Zombie_Survivor(game: Game):
+    # Intro
+    print("""
+                (()))
+               /|x x|
+              /\( - )
+      ___.-._/\/
+     /=`_'-'-'/  !!
+     |-{-_-_-}     !
+     (-{-_-_-}    !
+      \{_-_-_}   !
+       }-_-_-}
+       {-_|-_}
+       {-_|_-}
+       {_-|-_}
+       {_-|-_} 
+   ____%%@ @%%_______    
+""")
+    s_print("You find a zombie. He doesn't seem to be hostile... Freshly turned?")
+    
+    # Ask for input
+    menu = Menu("Do you want to try and convert the zombie back?", None, [
+        "Yes",
+        "No"
     ])
+
+    # Run
+    response, _ = menu.Start()
+    if (response == "No"):
+        s_print("You quickly run past...")
+        return False
+
+    # Attempt to convert the zombie
+    success = randint(1, 10) <= 4
+    s_print(f"{colours.fg.blue}Ok lets see what we are working with here...")
+    s_print(f"{colours.fg.blue}Add a dash of this...", 0.25)
+    s_print(f"{colours.fg.blue}Add a dash of that...", 0.25)
+    s_print(f"{colours.fg.blue}Turn around...", 0.4)
+    s_print(f"{colours.fg.blue}Touch my toes...", 0.5)
+    s_print(f"{colours.fg.blue}Aaaaand...")
+
+    # Failed
+    if (not success):
+        s_print(f"{colours.fg.blue}Uh oh.")
+        s_print(f"{colours.fg.green}BRAINS? BRAINS!!!")
+
+        # Lose HP
+        game.hp -= 1
+        print(f"{colours.fg.red}-1 Health{colours.reset}")
+        return False
+
+    # Success
+    medicSuccess = randint(1, 10) <= 8
+    survivor = Medic() if medicSuccess else Survivor()
+    s_print(f"The zombie successfully turned.")
+    s_print(f"It seemed to be a {survivor.type} zombie in its past life...")
+    print(f"{colours.fg.green}+1 {survivor.type}{colours.reset}")
+    game.survivors.append(survivor)

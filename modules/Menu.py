@@ -50,7 +50,7 @@ class Menu:
         return int(response)
 
     # Recursive prompt
-    def Start(self, menu = None, printTitle = False):
+    def Start(self, menu = None, printTitle = True):
         # Default
         menu = menu or self
 

@@ -4,6 +4,7 @@ from modules.Survivor import Survivor
 from typing import List
 from modules.Menu import Menu
 import os
+from modules.Utils import s_print, colours
 
 # Holds all of the game events
 Events = []
@@ -151,7 +152,7 @@ class Game:
             filtered = filter(lambda x: x.conditions == conditions, Events)
             event = next(filtered)
         except:
-            print("Nothing happened...")
+            s_print("Nothing happened...")
             input("Press enter to continue...")
             return False
 
@@ -169,8 +170,8 @@ class Game:
 
         # Check if we died. Prints repeatedly on test mode. Force exit?
         if (self.hp <= 0):
-            print("ugh... ow. i think it's time... time to close my eyes...")
-            print("GAME END: You have died.")
+            s_print(f"{colours.fg.blue}ugh... ow. i think it's time... time to close my eyes...")
+            print(f"{colours.fg.red}GAME END: You have died.")
             return True
     
         # Next round
@@ -183,11 +184,11 @@ class Game:
 
             # Survivor "died"
             if (survivor.runningAway == 0):
-                print("You have lost a survivor during the night...")
+                s_print("You have lost a survivor during the night...")
                 self.survivors.pop(i)
             else:
                 survivor.benefit(self)
-                print("ran benefit")
+                #print("ran benefit")
 
         # Output the info
      
