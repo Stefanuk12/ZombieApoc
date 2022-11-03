@@ -190,6 +190,7 @@ class Game:
                 print("ran benefit")
 
         # Output the info
+     
         self.PrintRoundInformation()
 
         # Will only break out via return when the day is started

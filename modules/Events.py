@@ -32,7 +32,7 @@ def Food_Nothing(game: Game):
 def Survivor_Nothing(game: Game):
     print("You're getting lonely... You waved to your imaginary friend.")
 
-# Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43)
+# Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43). To do: Check if Velma is alive, if not sacrifice a survivor or take damage 
 @event
 def Zombie_Zombie(game: Game):
     # Intro - calculate the number of zombies
@@ -142,3 +142,54 @@ def Zombie_Zombie(game: Game):
         return True
     else:
         return False # should not happen unless died
+
+#
+@event
+def Zombie_Ammo(game: Game):
+    # Intro
+    print("""
+            ___
+        ,-""___""-.
+       .;""'| |`"":.
+       || | | | | ||
+       ||_|_|_|_|_||
+      //          /|
+     /__         //|
+ ,-""___""-.    //||
+.;""'| |`"":.  //
+||/| | | | || //
+||_|_|_|_|_||//
+||_________||/
+||         ||
+''         ''  
+""")
+    print("You come across a zombie... It seems to be unconcious on some ammo...")
+
+    # Ask the user on what to do
+    menu = Menu("What will you do?", None, [
+        "Attempt to steal the ammo",
+        "Walk past quietly"
+    ])
+    response, _ = menu.Start(None, True)
+
+    # Check if zombie wakes up
+    zombieWakeChance = 8 if response == "Walk past quietly" else 5
+    d10 = randint(1, 10)
+    if (d10 <= zombieWakeChance):
+        # Check if we selected to steal the ammo
+        if (response == "Attempt to steal the ammo"):
+            # Add the ammo
+            stolenAmmo = d10 // 3
+            game.ammo += d10 // 3
+            print("Come on, come on, come on... Just, move, this... yes!")
+            print(f"You have successfully stolen {stolenAmmo} from the zombie.")
+
+        #
+        print("You walk quietly past the zombie")
+        return False
+
+    # Zombie woke up, uh oh
+    print("You walk past, but trip over a wire on the floor. The zombie wakes and sees you...")
+    zombieMenu = Menu("What will you do?", None, [
+        "" # implement zombie apoc logic here
+    ])
