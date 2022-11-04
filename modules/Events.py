@@ -22,6 +22,9 @@ def event(func: Callable):
 
 # Nothing events.
 @event
+def Nothing_Nothing(game: Game):
+    s_print("The wind wails, and the skies cry... You put up your ragged hood and walk on...")
+@event
 def Zombie_Nothing(game: Game):
     s_print("You spot a zombie in the far distance... You continue on.")
 @event
@@ -35,6 +38,8 @@ def Survivor_Nothing(game: Game):
     s_print(f"{colours.fg.blue}You're getting lonely... You waved to your imaginary friend.", 1.5)
 
 # Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43). To do: Check if Velma is alive, if not sacrifice a survivor or take damage 
+
+# Zombie events
 @event
 def Zombie_Zombie(game: Game):
     # Intro - calculate the number of zombies
@@ -296,3 +301,154 @@ def Zombie_Survivor(game: Game):
     s_print(f"It seemed to be a {survivor.type} zombie in its past life...")
     print(f"{colours.fg.green}+1 {survivor.type}{colours.reset}")
     game.survivors.append(survivor)
+
+# Ammo events
+@event
+def Ammo_Ammo(game: Game):
+    print("""
+                           ______
+        |\_______________ (_____\\______________
+HH======#H###############H#######################
+        ' ~""""""""""""""`##(_))#H\""''"Y########
+                          ))    \#H\       `"Y###
+                         "      }#H)    
+""")
+    ammoAmount = randint(3, 10)
+    s_print("You came across an abandoned warehouse...")
+    s_print("It held plentiful amounts of ammo.")
+    print(f"{colours.fg.green}+ {ammoAmount} Ammo{colours.reset}")
+    game.ammo += ammoAmount
+    s_print("You see another survivor... He offers you a proposition")
+
+    # Ask the user if they want to gamble their ammo
+    menu = Menu(f"Will you gamble your {ammoAmount} ammo?", None, [
+        "Yes",
+        "No"
+    ])
+    response, _ = menu.Start()
+
+    # They don't
+    if (response == "No"):
+        s_print("You back away slowly... Then start to run away.")
+        s_print(f"{colours.fg.red}Where are you going?")
+        return False
+
+    # They do
+    success = randint(1, 10) <= 3
+    s_print("The survivor writes 3 numbers on a piece of paper... You attempt to guess at least one...")
+    s_print(f"{colours.fg.blue}My guess is... 5")
+
+    # Fail
+    if (not success):
+        s_print(f"{colours.fg.red}You are... incorrect.")
+        s_print("You give the survivor their winnings, and walk away in defeat.")
+        print(f"{colours.fg.red}- {ammoAmount} Ammo{colours.reset}")
+        return False
+
+    # Success
+    s_print(f"{colours.fg.red}You are... correct! Lucky ba-")
+    s_print("You take your winnings from the survivor.")
+    s_print(f"{colours.fg.blue}Thank you very much.")
+    s_print("You walk away with a smerk on your face.")
+    game.ammo += ammoAmount
+
+@event
+def Ammo_Food(game: Game):
+    # Intro
+    giveUpAmount = randint(1, 3)
+    s_print("While travelling, you found yourself in a predicament...")
+    s_print(f"A survivor, operating a toll, demands you give up either {giveUpAmount} food or {giveUpAmount} ammo. Or else...")
+
+    # Ask for user input
+    menu = Menu("What will you give up?", None, [
+        "Food",
+        "Ammo"
+    ])
+    response, _ = menu.Start()
+
+    # Dialog
+    s_print(f"{colours.fg.red}Hurry up already, my time is valuable.")
+    s_print(f"{colours.fg.blue}Fine, fine. Here.")
+    print(f"{colours.fg.red}- {giveUpAmount} {response}{colours.reset}")
+    s_print("The survivor knods, letting you pass")
+
+    # Subtract
+    if (response == "Food"):
+        game.food -= giveUpAmount
+    else:
+        game.ammo -= giveUpAmount
+@event
+def Ammo_Survivor(game: Game):
+    # Intro
+    s_print("You see a survivor in the distance... They seem to be.. pregnant?")
+    s_print(f"{colours.fg.red}Hello? Anybody there? Help me. Please.")
+    s_print("You rush over, but remain cautious...")
+    s_print(f"{colours.fg.blue}Hello? What's wrong?")
+    s_print(f"{colours.fg.red}I... am so hungry. Please, give me food.")
+
+    # Ask for user input
+    menu = Menu("Will you give the survivor food?", None, [
+        "Yes",
+        "No"
+    ])
+    response, _ = menu.Start()
+
+    # Yes
+    if (response == "Yes"):
+        s_print(f"{colours.fg.blue}Here. Are you okay?")
+        s_print(f"{colours.fg.red}I'm a lot better now, thank you.")
+        s_print("They scruffle through their ripped bag, looking for something...")
+        s_print("You remain alert... Just in case.")
+        s_print(f"{colours.fg.red}I don't have a lot but here.")
+        print(f"{colours.fg.green}+1 Ammo{colours.reset}")
+        game.ammo += 1
+        s_print(f"{colours.fg.blue}Oh, thank you. You didn't have to.")
+        s_print(f"{colours.fg.red}I know, but nothing is free in this world anymore...")
+        s_print(f"{colours.fg.blue}I guess... I have to go. I hope you do well.")
+        s_print("You walk away.")
+        s_print(f"{colours.fg.red}You too.")
+        s_print("You turn back, and give a smile, before then continuing to walk off.")
+        return False
+
+    # No
+    s_print(f"{colours.fg.blue}I'm sorry, I can't.")
+    s_print("You walk away nonchalantly.")
+    s_print(f"{colours.fg.red}You vile person! Who would not help a pregnant lady?")
+    s_print("She hits you in a fit of rage while you attempt to run away.")
+    game.hp -= 1
+    print(f"{colours.fg.red}-1 Health{colours.reset}")
+    s_print("You run away, and while you do, you hear them shouting at you.")
+    s_print(f"{colours.fg.red}I hope you rot and die.")
+    s_print(f"{colours.fg.blue}Ow. My feelings. What's wrong with her?")
+    s_print("You kept on running...")
+
+# Food events
+@event
+def Food_Food(game: Game):
+    # Introduction
+    print("""
+                            |\ /| /|_/|
+                          |\||-|\||-/|/|
+                           \\|\|//||///
+          _..----.._       |\/\||//||||
+        .'     o    '.     |||\\|/\\ ||
+       /   o       o  \    | './\_/.' |
+      |o        o     o|   |          |
+      /'-.._o     __.-'\   |          |
+      \      `````     /   |          |
+      |``--........--'`|    '.______.'
+       \              /
+        `'----------'`    
+""")
+    s_print(f"{colours.fg.blue}A Burger King? What the- How?")
+    s_print("You enter...")
+    s_print(f"{colours.fg.red}Welcome traveller! What would you like today?")
+
+    # Ask for user input
+    menu = Menu("Select one", None, [
+        "What is this place?",
+        "A burger (2 Ammo) please.",
+        "Nothing, nevermind..."
+    ])
+
+# Survivor events

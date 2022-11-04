@@ -147,7 +147,7 @@ class Game:
 
         # Figure out the event
         conditions = [self.diceLookup[d1], self.diceLookup[d2]]
-        reverseConditions = conditions.reverse()
+        reverseConditions = list(reversed(conditions))
         event = None
         try:
             filtered = filter(lambda x: x.conditions == conditions or x.conditions == reverseConditions, Events)
@@ -166,13 +166,13 @@ class Game:
     def StartRound(self, d1=None, d2=None):
         # Check the rounds
         if (self.round > 100):
-            print("GAME END: You have survived. Congrats!")
+            print(f"{colours.fg.green}GAME END: You have survived. Congrats!{colours.reset}")
             return True
 
         # Check if we died. Prints repeatedly on test mode. Force exit?
         if (self.hp <= 0):
             s_print(f"{colours.fg.blue}ugh... ow. i think it's time... time to close my eyes...")
-            print(f"{colours.fg.red}GAME END: You have died.")
+            print(f"{colours.fg.red}GAME END: You have died.{colours.reset}")
             return True
     
         # Next round
@@ -192,7 +192,6 @@ class Game:
                 #print("ran benefit")
 
         # Output the info
-     
         self.PrintRoundInformation()
 
         # Will only break out via return when the day is started

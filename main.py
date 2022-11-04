@@ -22,6 +22,9 @@ game.survivors.append(Survivor())
 # game.StartRound(1, 2)
 # game.StartRound(1, 4)
 # game.StartRound(1, 6)
+# game.StartRound(2, 2)
+# game.StartRound(2, 4)
+game.StartRound(2, 6)
 
 # TESTS - nothing events
 # game.StartRound(1, 5)
