@@ -37,10 +37,9 @@ def Food_Nothing(game: Game):
 def Survivor_Nothing(game: Game):
     s_print(f"{colours.fg.blue}You're getting lonely... You waved to your imaginary friend.", 1.5)
 
-# Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43). To do: Check if Velma is alive, if not sacrifice a survivor or take damage 
-
 # Zombie events
 @event
+# Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43). To do: Check if Velma is alive, if not sacrifice a survivor or take damage 
 def Zombie_Zombie(game: Game):
     # Intro - calculate the number of zombies
     print(f"""
@@ -304,6 +303,8 @@ def Zombie_Survivor(game: Game):
 
 # Ammo events
 @event
+
+# Ammo events
 def Ammo_Ammo(game: Game):
     print("""
                            ______
@@ -424,6 +425,8 @@ def Ammo_Survivor(game: Game):
 
 # Food events
 @event
+
+# Food events
 def Food_Food(game: Game):
     # Introduction
     print("""
@@ -444,11 +447,84 @@ def Food_Food(game: Game):
     s_print("You enter...")
     s_print(f"{colours.fg.red}Welcome traveller! What would you like today?")
 
-    # Ask for user input
-    menu = Menu("Select one", None, [
-        "What is this place?",
-        "A burger (2 Ammo) please.",
-        "Nothing, nevermind..."
+    # Loop until we're leaving
+    while True:
+        # Ask for user input
+        menu = Menu("Select one", None, [
+            "What is this place?",
+            "Yeah, can I have a burger please?",
+            "I'm.. going to go..."
+        ])
+        response, _ = menu.Start()
+        s_print(f"{colours.fg.blue}{response}")
+        
+        # Breaking out
+        if (response == "I'm.. going to go..."):
+            s_print(f"{colours.fg.red}Goodbye! Have a great day!")
+            break
+
+        # Asking what this place it
+        if (response == "What is this place?"):
+            
+            s_print(f"{colours.fg.red}Burger King. Have you not read the sign?")
+            s_print(f"{colours.fg.blue}But how are you still alive? We are literally in a post-apocalypse world.")
+            s_print(f"{colours.fg.red}Well anything is possible, with the power of Christ!")
+            s_print(f"{colours.fg.blue}Okay... ?")
+            continue
+
+        # Ordering burger
+        if (response == "A burger (2 Ammo) please."):
+            s_print(f"{colours.fg.red}That will be 2 Ammo sir.")
+
+            # Check if we have enough ammo
+            if (game.ammo < 2):
+                s_print("You look hastily through your bag...")
+                s_print(f"{colours.fg.blue}I'm sorry, I can't afford it...")
+                s_print(f"{colours.fg.red}Oh. Well..")
+                s_print("The silence got louder, and the air stale...")
+                s_print(f"{colours.fg.blue}Nevermind.")
+                continue
+
+            # Dialog and taking ammo
+            s_print("You hand the ammo across...")
+            game.ammo -= 2
+            print(f"{colours.fg.red}-2 Ammo{colours.reset}")
+            s_print(f"{colours.fg.red}Coming right up! Please wait...")
+            s_print(f"{colours.fg.blue}Hold on. What order number am I?")
+            s_print(f"{colours.fg.red}Order 69.")
+            s_print("The sound of fizzling oil can be heard from the kitchen behind, and before you know it, ding!")
+            s_print(f"{colours.fg.red}Order up! Order 69?")
+            s_print("You take your burger, sit down, and eat it..")
+            s_print(f"{colours.fg.blue}Mmm, delicious.")
+            print(f"{colours.fg.green}+1 Health{colours.reset}")
+            game.hp += 1
+
+    # Leaving
+    s_print("You leave the shop, perplexed, wondering how it's still operational but thankful that some civilisation still exists.")
+def Food_Survivor(game: Game):
+    # Intro
+    s_print("You find a desolate person on the road... They seem hungry.")
+    s_print("They seem unresponsive...")
+
+    # Get user response
+    menu = Menu("Will you offer them one food?", None, [
+        "Yes",
+        "No"
     ])
+    response, _ = menu.Start()
+
+    # No
+    if (response == "No"):
+        s_print("You just walk past...")
+        return False
+
+    # Yes
+    s_print("You hand them food...")
+    print(f"{colours.fg.red}-1 Food")
+    s_print("They said nothing... You walk away, as you got further away, they started to follow you.")
+    medicChance = randint(1, 10) <= 5
+    survivor = Medic() if medicChance else Survivor()
+    s_print(f"{colours.fg.green}+1 {survivor.type}")
+    game.survivors.append(survivor)
 
 # Survivor events
