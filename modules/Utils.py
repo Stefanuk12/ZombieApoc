@@ -1,5 +1,23 @@
 # Dependencies
 from time import sleep
+from threading import Thread
+import sys
+
+# Custom thread
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs={}, Verbose=None):
+        Thread.__init__(self, group, target, name, args, kwargs)
+        self._return = None
+
+    def run(self):
+        if self._target is None:
+            return
+
+        self._return = self._target()
+
+    def join(self, *args):
+        Thread.join(self, *args)
+        return self._return
 
 # Colours
 class colours:
@@ -60,3 +78,15 @@ def s_print(text: str, delay: float = 1, regularDelay: float = 0.05, reset=True)
 
     # New line + reset
     print(colours.reset if reset else "")
+
+
+# Time limited input
+def time_input(text: str, timeout: float = 2):
+    # Get user response
+    print(text, flush=True)
+    response = ThreadWithReturnValue(target=sys.stdin.readline)
+    response.start()
+    inp = response.join(timeout)
+
+    # Return
+    return None if (inp is None) else inp.strip()

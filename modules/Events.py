@@ -1,11 +1,12 @@
 # Dependencies
 from typing import Callable
 from modules.Event import Event
-from random import randint
+from random import randint, choice
 from modules.Game import Events, Game
 from modules.Menu import Menu
 from modules.Survivor import Survivor, Medic
-from modules.Utils import s_print, colours
+from modules.Utils import s_print, colours, time_input
+import string
 
 # Decorator for creating events
 def event(func: Callable):
@@ -39,6 +40,8 @@ def Survivor_Nothing(game: Game):
 
 # Zombie events
 @event
+
+# Zombie events
 # Bug. The state of the ammoMenu is retained. If you have many zombie apocs, and attempt to shoot in each one, the menu items are the same + more from last time. (line 43). To do: Check if Velma is alive, if not sacrifice a survivor or take damage 
 def Zombie_Zombie(game: Game):
     # Intro - calculate the number of zombies
@@ -427,6 +430,7 @@ def Ammo_Survivor(game: Game):
 @event
 
 # Food events
+@event
 def Food_Food(game: Game):
     # Introduction
     print("""
@@ -501,6 +505,7 @@ def Food_Food(game: Game):
 
     # Leaving
     s_print("You leave the shop, perplexed, wondering how it's still operational but thankful that some civilisation still exists.")
+@event
 def Food_Survivor(game: Game):
     # Intro
     s_print("You find a desolate person on the road... They seem hungry.")
@@ -528,3 +533,99 @@ def Food_Survivor(game: Game):
     game.survivors.append(survivor)
 
 # Survivor events
+@event
+def Survivor_Survivor(game: Game):
+    # Intro
+    print("""
+      /:""|       .@@@@@,
+     |: 66|_      @@@@@@@@,
+     C     _)     aa`@@@@@@
+      \ ._|      (_   ?@@@@
+       ) /        =' @@@@"
+      /`\\         \(```
+     || |Y|       //`\        ."~~~~~".
+     || |#|      / | ||       |  .:.  |
+     || |#|      \ | ||    A  | /6 6\ |
+     || |#|      / | ||   |~|_|_\ e /_|_     .@@@@,
+     :| |=:     /  | |\   |_|)___`"`___(8    aa`@@@,
+     ||_|,|    |   |_| \     |~~~~~~~~~|     =  `@@@
+     \)))||    |   (((  |    \_________/       )_/`@'
+  |~~~`-`~~~|  `~\~~~~~~|     |/ /_\ \|       / || @
+  |         |     `\   /      ()/___\()       | || @
+  |_________|       ( ||      ||~~~~~||       /~|| "`
+  |_________|       | ||      ||     ||      /__W_\
+      | ||          | ||      ||     ||        |||
+      |_||__      __|_||      ||_____||       _|||
+      (____))    (:;:;))      ||-----||      ((___)
+""")
+    s_print("You find a pact of survivors working together...")
+    s_print("They approach you...")
+    s_print(f"{colours.fg.red}Hello, how are you?")
+
+    # Ask the user for input
+    menu = Menu("Select one", None, [
+        "I'm alright, you?",
+        "Who are you guys?"
+    ])
+    response, _ = menu.Start()
+
+    #
+    s_print(f"{colours.fg.blue}{response}")
+    if (response == "I'm alright, you?"):
+        s_print(f"{colours.fg.red}Great, thanks for asking!")
+    else:
+        s_print(f"{colours.fg.red}Getting straight to the point, aren't we?")
+
+    #
+    s_print(f"{colours.fg.red}We are the 6 Flag Commitee and we, help... others survivors. But of course, everything has a price.")
+    s_print(f"{colours.fg.blue}A price...? What price? What reward even?")
+    s_print(f"{colours.fg.red}Well, we get bored around here a lot so we would like some entertainment... Guys, what do we all like?")
+    s_print("They all say collectively,")
+    s_print(f"{colours.fg.red}BLOOD!")
+    s_print(f"{colours.fg.red}So what do you say, are you in or out?")
+    s_print(f"{colours.fg.blue}Wait, you haven't said what I get out of it..")
+    s_print(f"{colours.fg.red}Glory, wealth, and success!")
+
+    # Ask for user input
+    menu2 = Menu("What will you do?", None, [
+        "Participate",
+        "Run away"
+    ])
+    response2, _ = menu2.Start()
+
+    # Running away
+    if (response == "Run away"):
+        s_print(f"{colours.fg.red}Running away, are we?")
+        s_print(f"{colours.fg.red}Oh well, your loss...")
+        return False
+
+    # Participate
+    s_print(f"{colours.fg.red}Good choice. Let the fun begin!")
+    s_print(f"{colours.fg.blue}So, what am I doing..?")
+    zombieCount = randint(3, 10)
+    s_print("You black out and wake up in a hole..")
+    s_print(f"Before you know it, there are {zombieCount} zombies approaching you.")
+
+    # Quick time events
+    for i in range(zombieCount):
+        s_print("A zombie runs for your head", 0.01, 0.025)
+        randomLetter = choice(string.ascii_letters).upper()
+        givenInput = time_input(f"Press {randomLetter}") # randomise this
+
+        # Check if we died
+        if (game.hp <= 0):
+            return True
+
+        # Did not input
+        if (not givenInput or givenInput != randomLetter):
+            s_print("Incorrect. You failed the attack but still managed to kill the zombie at the cost of one health")
+            print(f"{colours.fg.red}-1 Health{colours.reset}")
+            game.hp -= 1
+
+        # Zombie died
+        s_print(f"{colours.fg.blue}Bring on the next one!", 0.05, 0.025)
+
+    #
+    s_print(f"{colours.fg.blue}That was one entertaining fight. Well done!")
+    print(f"{colours.fg.green}+10 Food{colours.reset}")
+    s_print("You walk away, it was a tough battle. Was it worth it?")
